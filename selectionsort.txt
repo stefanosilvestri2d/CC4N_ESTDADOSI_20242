@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    int faixa = 100; // número máximo gerado na função randômica
+    int min;//variável utilizada para o valor achar o valor mínimo
+    int aux;//variável para troca de posição
+    int pos;//variável para guardar posição do valor mínimo
+    int qtd = 50; // variável para quantidade de números do vetor;
+    int vet[qtd]; // vetor para armazenar os números
+    
+    
+    //geração dos números aleatórios e armazenados no vetor
+    
+    for(int i=0;i<qtd;i++){
+        vet[i] = rand()%faixa;
+    }
+    
+    //impressão do vetor antes da ordenação
+    
+    for(int i=0;i<qtd;i++){
+        printf("%d ",vet[i]);
+    }   
+    
+    //percorrer todo o vetor
+    for(int i=0;i<qtd-1;i++){
+        //guardar posição do elemento para fazer a comparação com os outro elementos
+        pos=i;
+        //o valor mínimo é o elemento da posição i
+        min = vet[i];
+        // percorrer os outros elementos que estão depois do número vet[i]
+        for(int j=i+1;j<qtd;j++){
+            //se o valor mínimo for maior que os próximos elementos          
+            if(min>vet[j]){
+                //atualiza o valor mínimo e sua posição
+                min = vet[j];
+                pos = j;
+            }
+        }
+        //se a posição foi atualizada é preciso trocar os elementos
+        if(pos!= i){
+            //variável para guardar elemento
+            aux = vet[i];
+            // o menor valor vai para o início
+            vet[i] = min;
+            // e o número maior vai para posição onde estava o menor valor.
+            vet[pos] = aux;
+        }
+        
+    }
+
+    printf("\n\n");
+
+    //imprimir o vetor depois de ordenado.
+    for(int i=0;i<qtd;i++){
+        printf("%d ",vet[i]);
+    }     
+    
+    return 0;
+}
