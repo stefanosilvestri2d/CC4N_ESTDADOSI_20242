@@ -1,0 +1,60 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    int faixa = 100; // número máximo gerado na função randômica
+    int aux; // variável para guardar elemento temporariamente
+    int flag; // variável para o loop while
+    int qtd = 50; // variável para quantidade de números do vetor;
+    int vet[qtd]; // vetor para armazenar os números
+    
+    
+    //geração dos números aleatórios e armazenados no vetor
+    
+    for(int i=0;i<qtd;i++){
+        vet[i] = rand()%faixa;
+    }
+    
+    //impressão do vetor antes da ordenação
+    
+    for(int i=0;i<qtd;i++){
+        printf("%d ",vet[i]);
+    }
+    
+    
+    // variável flag recebe o valor de 1 para que o loop while seja verdadeiroe entrar no loop
+    flag = 1;
+    
+    while(flag){
+        /*variável flag recebe o valor de zero para verificar se existe um número anterior maior que o próximo,
+        se não existe o vetor estar ordenado e a condição é falsa
+        o algoritimo sai do loop */
+        flag=0;
+        
+        //laço para percorrer o vetor
+        for(int i=0;i<qtd-1;i++){
+            //caso o número anterior for maior que o próximo número troca a posição
+            if(vet[i]>vet[i+1]){
+                //grava o primeiro número
+                aux = vet[i];
+                //o anterior recebe o próximo
+                vet[i]=vet[i+1];
+                //o próximo recebe o anterior registrado na variável aux
+                vet[i+1]=aux;
+                //variável flag recebe 1 pois é preciso percorrer de novo o vetor.
+                flag=1;
+            }
+        }
+    }
+    //pular linha
+    printf("\n\n");
+    
+    //imprimir o vetor ordenado
+    for(int i=0;i<qtd;i++){
+        printf("%d ",vet[i]);
+    }    
+    
+    return 0;
+}
