@@ -1,0 +1,53 @@
+#include <stdio.h>   
+#include <stdlib.h>  
+
+int main() {
+    int faixa = 100; // número máximo gerado na função randômica
+    int qtd = 50;    // quantidade de números do vetor
+    int vet[qtd];    // vetor para armazenar os números  
+    int aux; // variável para guardar elemento temporariamente
+    int j; // variável para posição de varredura
+    
+    
+    // geração dos números aleatórios e armazenados no vetor
+    for(int i = 0; i < qtd; i++) {
+        vet[i] = rand() % faixa;   
+    }
+    
+    // impressão do vetor antes da ordenação
+    for(int i = 0; i < qtd; i++) {
+        printf("%d ", vet[i]);   
+    }
+    
+    // realizar a varredura para direita do vetor
+    for(int i = 1; i < qtd; i++) {
+        
+        // guardar o elemento para comparar com os anteriores
+        aux = vet[i];   
+        
+        // posição para varredura dos elementos a esquerda da posição i 
+        j = i - 1;      
+        
+        /* loop para varredura no sentido da esquerda, enquanto o anterior for maior
+        que o próximo*/
+        while(j >= 0 && vet[j] > aux) {
+            // desloca o elemento maior para direita
+            vet[j + 1] = vet[j];   
+            // diminui a posição da varredura da esquerda até o início do vetor
+            j--;                   
+        }
+        
+        // colocar o elemento maior no final
+        vet[j + 1] = aux;
+    }
+    
+     
+    printf("\n\n");
+     
+    //imprimir o vetor ordenado
+    for(int i = 0; i < qtd; i++) {
+        printf("%d ", vet[i]); 
+    }
+    
+    return 0;  
+}
