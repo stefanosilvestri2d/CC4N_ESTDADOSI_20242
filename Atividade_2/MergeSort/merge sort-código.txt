@@ -2,30 +2,30 @@
 #include <stdlib.h>
 
 
-//Função para gerar um vetor com números aleatórios
+//FunÃ§Ã£o para gerar um vetor com nÃºmeros aleatÃ³rios
 void gerarVetor(int vet[], int qtd, int faixa) {
     for (int i = 0; i < qtd; i++) {
-        vet[i] = rand() % faixa; // Preenche o vetor com números aleatórios
+        vet[i] = rand() % faixa; // Preenche o vetor com nÃºmeros aleatÃ³rios
     }
 }
 
-//Função merge
+//FunÃ§Ã£o merge
 void merge(int vet[], int esquerda, int meio, int direita) {
    
-    //Variáveis para percorrer o vetor
+    //VariÃ¡veis para percorrer o vetor
     //i aponta para o primeiro vetor
     //j aponta para o segundo vetor
-    //k variável para auxiliar no armazenamento do vetor auxiliar
+    //k variÃ¡vel para auxiliar no armazenamento do vetor auxiliar
     int i = esquerda, j = meio + 1, k = 0;
    
     //Tamanho dos subvetores
     int n = (direita - esquerda) + 1;
     
-    // Alocação dinâmica porque os subarrays variam o tamanho
+    // AlocaÃ§Ã£o dinÃ¢mica porque os subarrays variam o tamanho
     int *vaux = (int *)malloc(n * sizeof(int));
     
-    if (vaux == NULL) { // Verifica se a alocação de memória foi bem-sucedida
-        printf("Erro de alocação de memória.\n");
+    if (vaux == NULL) { // Verifica se a alocaÃ§Ã£o de memÃ³ria foi bem-sucedida
+        printf("Erro de alocaÃ§Ã£o de memÃ³ria.\n");
         exit(1);
     }
     
@@ -55,19 +55,19 @@ void merge(int vet[], int esquerda, int meio, int direita) {
     for (k = 0, i = esquerda; k < n; i++, k++) {
         vet[i] = vaux[k];
     }
-    //libera espaço do vetor auxiliar
+    //libera espaÃ§o do vetor auxiliar
     free(vaux);
 }
 
-//Função para mesclar os subarrays
+//FunÃ§Ã£o para mesclar os subarrays
 void mergeSort(int vet[], int esquerda, int direita) {
-    //Condição para verificar se a varredura do vetor não chegou no final
+    //CondiÃ§Ã£o para verificar se a varredura do vetor nÃ£o chegou no final
     if (esquerda < direita) {
         // calcular o valor do meio
         int meio = (esquerda + direita) / 2;
-        //usa função recursiva para dividir o vetor em subarrays da primeira metade
+        //usa funÃ§Ã£o recursiva para dividir o vetor em subarrays da primeira metade
         mergeSort(vet, esquerda, meio);
-        //usa função recursiva para dividir o vetor em subarrays da segunda metade
+        //usa funÃ§Ã£o recursiva para dividir o vetor em subarrays da segunda metade
         mergeSort(vet, meio + 1, direita);
         //Mescla os subarrays e ordena.
         merge(vet, esquerda, meio, direita);
@@ -75,15 +75,15 @@ void mergeSort(int vet[], int esquerda, int direita) {
 }
 
 int main() {
-    int qtd = 10;   // Quantidade de números no vetor
-    int faixa = 100; // Faixa máxima dos números gerados
+    int qtd = 10;   // Quantidade de nÃºmeros no vetor
+    int faixa = 100; // Faixa mÃ¡xima dos nÃºmeros gerados
     int vet[qtd];   // Declara o vetor
 
-    // Função para gerar de números aleatórios
+    // FunÃ§Ã£o para gerar de nÃºmeros aleatÃ³rios
     gerarVetor(vet, qtd, faixa);
 
-    // ImpressÃ£o do vetor antes da ordenação
-    printf("Vetor antes da ordenação:\n");
+    // ImpressÃƒÂ£o do vetor antes da ordenaÃ§Ã£o
+    printf("Vetor antes da ordenaÃ§Ã£o:\n");
     for (int i = 0; i < qtd; i++) {
         printf("%d ", vet[i]);
     }
@@ -92,8 +92,8 @@ int main() {
     // Ordena o vetor usando Merge Sort
     mergeSort(vet, 0, qtd - 1);
 
-    // Impressão do vetor após a ordenação
-    printf("Vetor após a ordenação:\n");
+    // ImpressÃ£o do vetor apÃ³s a ordenaÃ§Ã£o
+    printf("Vetor apÃ³s a ordenaÃ§Ã£o:\n");
     for (int i = 0; i < qtd; i++) {
         printf("%d ", vet[i]);
     }
