@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+//Função para gerar um vetor com números aleatórios
+void gerarVetor(int vet[], int qtd, int faixa) {
+    for (int i = 0; i < qtd; i++) {
+        vet[i] = rand() % faixa; // Preenche o vetor com números aleatórios
+    }
+}
+
+//Função merge
+void merge(int vet[], int esquerda, int meio, int direita) {
+   
+    //Variáveis para percorrer o vetor
+    //i aponta para o primeiro vetor
+    //j aponta para o segundo vetor
+    //k variável para auxiliar no armazenamento do vetor auxiliar
+    int i = esquerda, j = meio + 1, k = 0;
+   
+    //Tamanho dos subvetores
+    int n = (direita - esquerda) + 1;
+    
+    // Alocação dinâmica porque os subarrays variam o tamanho
+    int *vaux = (int *)malloc(n * sizeof(int));
+    
+    if (vaux == NULL) { // Verifica se a alocação de memória foi bem-sucedida
+        printf("Erro de alocação de memória.\n");
+        exit(1);
+    }
+    
+    //Para comparar os dois subarrays
+    while (i <= meio && j <= direita) {
+        //caso o elemento do primeiro subarray seja maior armazena no vetor auxiliar
+        if (vet[i] < vet[j]) {
+            vaux[k++] = vet[i++];
+            //depois incrementa valor de k e i para percorrer o vetor
+        
+        //caso o elemento do segundo subarray seja maior armazena no vetor auxiliar    
+        } else {
+            vaux[k++] = vet[j++];
+            //depois incrementa valor de k e i para percorrer o vetor
+        }
+    }
+    
+    //Caso sobre algum valor no primeiro subarray 
+    while (i <= meio) {
+        vaux[k++] = vet[i++];
+    }
+    //Caso sobre algum valor no segundo subarray
+    while (j <= direita) {
+        vaux[k++] = vet[j++];
+    }
+    //copia a o vetor aux ordenado para o vetor original
+    for (k = 0, i = esquerda; k < n; i++, k++) {
+        vet[i] = vaux[k];
+    }
+    //libera espaço do vetor auxiliar
+    free(vaux);
+}
+
+//Função para mesclar os subarrays
+void mergeSort(int vet[], int esquerda, int direita) {
+    //Condição para verificar se a varredura do vetor não chegou no final
+    if (esquerda < direita) {
+        // calcular o valor do meio
+        int meio = (esquerda + direita) / 2;
+        //usa função recursiva para dividir o vetor em subarrays da primeira metade
+        mergeSort(vet, esquerda, meio);
+        //usa função recursiva para dividir o vetor em subarrays da segunda metade
+        mergeSort(vet, meio + 1, direita);
+        //Mescla os subarrays e ordena.
+        merge(vet, esquerda, meio, direita);
+    }
+}
+
+int main() {
+    int qtd = 10;   // Quantidade de números no vetor
+    int faixa = 100; // Faixa máxima dos números gerados
+    int vet[qtd];   // Declara o vetor
+
+    // Função para gerar de números aleatórios
+    gerarVetor(vet, qtd, faixa);
+
+    // ImpressÃ£o do vetor antes da ordenação
+    printf("Vetor antes da ordenação:\n");
+    for (int i = 0; i < qtd; i++) {
+        printf("%d ", vet[i]);
+    }
+    printf("\n");
+
+    // Ordena o vetor usando Merge Sort
+    mergeSort(vet, 0, qtd - 1);
+
+    // Impressão do vetor após a ordenação
+    printf("Vetor após a ordenação:\n");
+    for (int i = 0; i < qtd; i++) {
+        printf("%d ", vet[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
