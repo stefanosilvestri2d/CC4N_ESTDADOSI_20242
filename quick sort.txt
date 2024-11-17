@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Função para gerar um vetor com valores aleatórios
+void gerarVetor(int vet[], int qtd, int faixa) {
+    for (int i = 0; i < qtd; i++) {
+        vet[i] = rand() % faixa;
+    }
+}
+
+// Função para trocar dois elementos no vetor
+void troca(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Função de partição para o Quick Sort
+//recebe o vetor e duas posições: esquerda o início, direita o final
+int partition(int vet[], int esquerda, int direita) {
+    //Variável pivô elemento central
+    int pivo = vet[esquerda]; // Escolhe o pivô como o primeiro elemento
+    int i = esquerda + 1;      // Índice para elementos menores que o pivô
+    int j = direita;         // Índice para elementos maiores que o pivô
+
+    while (i <= j) {
+        // Avança `i` até encontrar um elemento maior que o pivô
+        while (i <= direita && vet[i] <= pivo) {
+            i++;
+        }
+        // Retrocede `j` até encontrar um elemento menor ou igual ao pivô
+        while (vet[j] > pivo) {
+            j--;
+        }
+        // Se `i` e `j` ainda não cruzaram, troca os elementos
+        if (i < j) {
+            troca(&vet[i], &vet[j]);
+        }
+    }
+
+    // Coloca o pivô na posição correta
+    troca(&vet[esquerda], &vet[j]);
+    return j; // Retorna a posição final do pivô
+}
+
+// Função recursiva do Quick Sort
+void quicksort(int vet[], int esquerda, int direita) {
+    if (esquerda < direita) {
+        int pivo = partition(vet, esquerda, direita); // Particiona o vetor
+        quicksort(vet, esquerda, pivo - 1);         // Ordena a parte esquerda
+        quicksort(vet, pivo + 1, direita);        // Ordena a parte direita
+    }
+}
+
+int main() {
+    int qtd = 10;   // Quantidade de números no vetor
+    int faixa = 100; // Faixa máxima dos números gerados
+    int vet[qtd];   // Declara o vetor
+
+    // Função para geração de números aleatórios
+    gerarVetor(vet, qtd, faixa);
+
+    // Impressão do vetor antes da ordenação
+    printf("Vetor antes da ordenação:\n");
+    for (int i = 0; i < qtd; i++) {
+        printf("%d ", vet[i]);
+    }
+    printf("\n");
+
+    // Ordena o vetor usando Quick Sort
+    quicksort(vet, 0, qtd - 1);
+
+    // Impressão do vetor depois da ordenação
+    printf("Vetor depois da ordenação:\n");
+    for (int i = 0; i < qtd; i++) {
+        printf("%d ", vet[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
