@@ -1,0 +1,241 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+// Estrutura de um nó
+typedef struct no{
+    int valor;
+    struct no *esquerdo,*direito;
+}No;
+
+
+//Estrutura da árvore
+typedef struct{
+    No * raiz;
+}Arvore_binaria;
+
+
+//Declarações das funções
+void inserir_esquerda(No*no, int valor);
+
+void inserir_direita(No*no, int valor);
+
+void  inserir(Arvore_binaria*arv, int valor);
+
+No * remover(No*raiz,int valor);
+
+void imprimir(No*raiz);
+
+int buscar(No*raiz, int valor);
+
+int main()
+{
+    //declaração da árvore
+    Arvore_binaria arvore;
+    //Árvore começa vazia
+    arvore.raiz = NULL;
+    //Variável para opção do usuário
+    int op;
+    // Variáveis para, buscar , inserir e remover.
+    int valor,busca;
+    
+    while(1){
+        
+        //Menu do usuário
+        printf("\n");
+        printf("Digite 1 - Para inserir\n");
+        printf("Digite 2 - Para remover\n");
+        printf("Digite 3 - Para buscar\n");
+        printf("Digite 4 - Para imprimir\n");
+        printf("Digite 5 - Para sair\n");
+        scanf("%d", &op);
+        
+        switch(op){
+            case 1:
+                printf("Digite um valor\n");
+                scanf("%d", &valor);
+                inserir(&arvore,valor);
+                break;
+            case 2:
+                //Envia a árvore e o elemento que quer ser removido
+                printf("Digite o valor para remover\n");
+                scanf("%d", &valor);
+                arvore.raiz = remover(arvore.raiz,valor);
+                break;
+            case 3:
+                printf("Digite o valor para buscar\n");
+                scanf("%d", &valor);
+                //Valor 0 não achou , valor 1 achou o elemento
+                busca = buscar(arvore.raiz,valor);
+                if(busca == 0){
+                    printf("Valor não encontrado");
+                }
+                else{
+                    printf("O valor %d pertence a árvore", valor);
+                }
+                break;
+            case 4:
+                printf("Impressão árvore binária:\n");
+                imprimir(arvore.raiz);
+                break;
+            case 5:
+                printf("Fim do Programa\n");
+                exit(0);
+                break;
+            default:
+                printf("Escolha inválida\n");
+        }
+        
+        
+    }
+
+    return 0;
+}
+
+// Quando precisa inserir a esquerda
+void inserir_esquerda(No*no, int valor){
+    // Se o nó da esquerda for nulo inseri a esquerda desse nó
+    if(no->esquerdo == NULL){
+        No*novo = (No*)malloc(sizeof(No));
+        novo -> valor = valor;
+        novo-> esquerdo = NULL;
+        novo-> direito = NULL;
+        no->esquerdo = novo;
+    }
+    else{
+        //Se o valor for menor chama a função inserir_esquerda recursivamente
+        if(valor < no->esquerdo->valor){
+            inserir_esquerda(no->esquerdo, valor);
+        }
+        //Se o valor for maior chama a função inserir_direita recursivamente
+        if(valor > no->esquerdo->valor){
+            inserir_direita(no->esquerdo, valor);
+        }
+    }
+    
+}
+
+// Quando precisa inserir a direita
+void inserir_direita(No*no, int valor){
+    // Se o nó da direita for nulo inseri a esquerda desse nó
+    if(no->direito == NULL){
+        No*novo = (No*)malloc(sizeof(No));
+        novo -> valor = valor;
+        novo-> esquerdo = NULL;
+        novo-> direito = NULL;
+        no->direito = novo;
+    }
+    else{
+        //Se o valor for maior chama a função inserir_direita recursivamente
+        if(valor > no->direito->valor){
+            inserir_direita(no->direito,valor);
+        }
+        //Se o valor for menor chama a função inserir_esquerda recursivamente
+        if(valor < no->direito->valor){
+            inserir_esquerda(no->direito,valor);
+        }
+    }
+    
+}
+// Função para inserir valor
+void  inserir(Arvore_binaria*arv, int valor){
+    //Se o nó  da árvore for nulo insere o novo nó com o valor
+    if(arv->raiz == NULL){
+        No*novo = (No*)malloc(sizeof(No));
+        novo -> valor = valor;
+        novo-> esquerdo = NULL;
+        novo-> direito = NULL;
+        arv->raiz = novo;
+    }
+    else{
+        //Se o valor for menor que nó da árvore chama recursivamente a função inserir_esquerda
+        if(valor < arv->raiz->valor){
+            inserir_esquerda(arv->raiz, valor);
+        }
+        //Se o valor for maior que nó da árvore chama recursivamente a função inserir_direita
+        if(valor > arv->raiz->valor){
+            inserir_direita(arv->raiz, valor);
+        }
+    }
+}
+//Função para busca
+int buscar(No*raiz, int valor){
+    //Se o valor não for encontrado o valor retornado é 0 para o menu
+    if(raiz==NULL){
+        return 0;
+    }
+    else{
+        //Se o valor for encontrado retorna 1 para o menu
+        if(raiz->valor == valor){
+            return 1;
+        }
+        else{
+            //Se o valor for menor do que o nó vai para parte esquerda da árvore
+            if(valor< raiz->valor){
+                buscar(raiz->esquerdo, valor);
+            }
+            else{
+                //Se o valor for maior do que o nó vai para parte direita da árvore
+                buscar(raiz->direito, valor);
+            }
+            // Valores iguais não são armazenados
+        }
+    }
+}
+// Função para remover
+No* remover(No* raiz, int valor) {
+    // Se o valor que o usuário quer remover não for encontrado
+    if (raiz == NULL) {
+        printf("Valor não encontrado\n");
+        return NULL;
+    }
+    //Se o valor for menor, passa o nó do lado esquerdo
+    if (valor < raiz->valor) {
+        raiz->esquerdo = remover(raiz->esquerdo, valor);
+    //Se o valor for maior, passa o nó do lado direito
+    } else if (valor > raiz->valor) {
+        raiz->direito = remover(raiz->direito, valor);
+    } else {
+        // Caso 1: Nó é uma folha
+        if (raiz->esquerdo == NULL && raiz->direito == NULL) {
+            free(raiz);
+            return NULL;
+        }
+
+        // Caso 2: Nó tem apenas um filho
+        //Se for o lado esquerdo,libera o esquerdo e reotrna o direito
+        if (raiz->esquerdo == NULL) {
+            No* temp = raiz->direito;
+            free(raiz);
+            return temp;
+        }
+        //Se for o lado direito,libera o direito e reotrna o esquerdo
+        if (raiz->direito == NULL) {
+            No* temp = raiz->esquerdo;
+            free(raiz);
+            return temp;
+        }
+
+        // Caso 3: Nó tem dois filhos
+        // Encontrar o nó com o menor valor no lado direito (sucessor)
+        No* sucessor = raiz->direito;
+        // Percorrer até encontrar o menor valor no lado esquerdo da subárvore direita
+        while (sucessor->esquerdo != NULL) {
+            sucessor = sucessor->esquerdo;
+        }
+        // Substituir o valor do nó atual pelo valor do sucessor
+        raiz->valor = sucessor->valor;
+        // Remover o nó sucessor da subárvore direita
+        raiz->direito = remover(raiz->direito, sucessor->valor);
+    }
+
+    return raiz;
+}
+// Função para imprimir
+void imprimir(No*raiz){
+    if(raiz!=NULL){
+        imprimir(raiz->esquerdo);
+        printf("%d ", raiz->valor);
+        imprimir(raiz->direito);
+    }
+}
