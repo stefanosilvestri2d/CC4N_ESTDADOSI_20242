@@ -1,0 +1,245 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Estrutura de um nó
+typedef struct no {
+    int valor;                  // Valor armazenado no nó
+    struct no *esquerdo;        // Ponteiro para o filho esquerdo
+    struct no *direito;         // Ponteiro para o filho direito
+    short altura;               // Variável para armazenar a altura do nó
+} No;
+
+// Estrutura da árvore AVL
+typedef struct {
+    No *raiz;                   
+} Arvore_avl;
+
+// Declaração das funções
+No* balancear(No* raiz);
+No* remover(No* raiz, int valor);
+No* novoNo(int valor);
+No* inserir(No* raiz, int valor);
+short maior(short a, short b);
+short alturaDoNo(No* no);
+short fatorDeBalanceamento(No* no);
+No* rotacaoEsquerda(No* r);
+No* rotacaoDireita(No* r);
+No* rotacaoDireitaEsquerda(No* r);
+No* rotacaoEsquerdaDireita(No* r);
+int buscar(No* raiz, int valor);
+void imprimir(No* raiz);
+
+int main() {
+    Arvore_avl arvore;
+    arvore.raiz = NULL;         
+    int op, valor, busca;
+
+    while (1) {
+        // Menu usuário
+        printf("\n");
+        printf("Digite 1 - Para inserir\n");
+        printf("Digite 2 - Para remover\n");
+        printf("Digite 3 - Para buscar\n");
+        printf("Digite 4 - Para imprimir\n");
+        printf("Digite 5 - Para sair\n");
+        scanf("%d", &op);
+
+        switch (op) {
+            case 1:
+                printf("Digite um valor\n");
+                scanf("%d", &valor);
+                // Insere o valor na árvore
+                arvore.raiz = inserir(arvore.raiz, valor); 
+                break;
+            case 2:
+                printf("Digite o valor para remover\n");
+                scanf("%d", &valor);
+                // Remove o valor da árvore
+                arvore.raiz = remover(arvore.raiz, valor); 
+                break;
+            case 3:
+                printf("Digite o valor para buscar\n");
+                scanf("%d", &valor);
+                // Busca o valor na árvore
+                busca = buscar(arvore.raiz, valor);        
+                if (busca == 0) {
+                    printf("Valor não encontrado\n");
+                } else {
+                    printf("O valor %d pertence à árvore\n", valor);
+                }
+                break;
+            case 4:
+                printf("Impressão árvore avl:\n");
+                // Imprime a árvore em ordem
+                imprimir(arvore.raiz);                    
+                break;
+            case 5:
+                printf("Fim do Programa\n");
+                exit(0);                                  
+                break;
+            default:
+                printf("Escolha inválida\n");
+        }
+    }
+    return 0;
+}
+
+// Função para balancear a árvore
+No* balancear(No* raiz) {
+    short fb = fatorDeBalanceamento(raiz);               // Calcula o fator de balanceamento
+
+    if (fb < -1 && fatorDeBalanceamento(raiz->direito) <= 0) {
+        raiz = rotacaoEsquerda(raiz);                    // Realiza rotação à esquerda
+    }
+    if (fb > 1 && fatorDeBalanceamento(raiz->esquerdo) >= 0) {
+        raiz = rotacaoDireita(raiz);                     // Realiza rotação à direita
+    }
+    if (fb > 1 && fatorDeBalanceamento(raiz->esquerdo) < 0) {
+        raiz = rotacaoEsquerdaDireita(raiz);             // Realiza rotação esquerda-direita
+    }
+    if (fb < -1 && fatorDeBalanceamento(raiz->direito) > 0) {
+        raiz = rotacaoDireitaEsquerda(raiz);             // Realiza rotação direita-esquerda
+    }
+    return raiz;
+}
+
+// Função para remover um valor da árvore
+No* remover(No* raiz, int valor) {
+    if (raiz == NULL) {
+        printf("Valor não encontrado\n");
+        return NULL;                                    // Retorna NULL se o nó não existir
+    }
+
+    if (valor < raiz->valor) {
+        raiz->esquerdo = remover(raiz->esquerdo, valor); // Remove da subárvore esquerda
+    } else if (valor > raiz->valor) {
+        raiz->direito = remover(raiz->direito, valor);   // Remove da subárvore direita
+    } else {
+        if (raiz->esquerdo == NULL || raiz->direito == NULL) {
+            No* temp = raiz->esquerdo ? raiz->esquerdo : raiz->direito; // Nó com um filho ou nenhum
+            free(raiz);
+            return temp;
+        } else {
+            No* sucessor = raiz->direito;              // Encontra o sucessor na subárvore direita
+            while (sucessor->esquerdo != NULL) {
+                sucessor = sucessor->esquerdo;
+            }
+            raiz->valor = sucessor->valor;             // Substitui o valor pela do sucessor
+            raiz->direito = remover(raiz->direito, sucessor->valor);
+        }
+    }
+
+    raiz->altura = maior(alturaDoNo(raiz->esquerdo), alturaDoNo(raiz->direito)) + 1;
+    return balancear(raiz);                             // Balanceia a árvore após a remoção
+}
+
+// Função para inserir um valor na árvore
+No* inserir(No* raiz, int valor) {
+    if (raiz == NULL) {
+        return novoNo(valor);                          // Cria um novo nó se o local estiver vazio
+    }
+    if (valor < raiz->valor) {
+        raiz->esquerdo = inserir(raiz->esquerdo, valor); // Insere na subárvore esquerda
+    } else if (valor > raiz->valor) {
+        raiz->direito = inserir(raiz->direito, valor);   // Insere na subárvore direita
+    } else {
+        printf("Valor já existe na árvore\n");
+        return raiz;
+    }
+
+    raiz->altura = maior(alturaDoNo(raiz->esquerdo), alturaDoNo(raiz->direito)) + 1;
+    return balancear(raiz);                             // Balanceia a árvore após a inserção
+}
+
+// Função para criar um novo nó
+No* novoNo(int valor) {
+    No* novo = (No*)malloc(sizeof(No));
+    if (novo) {
+        novo->valor = valor;                           // Define o valor do nó
+        novo->esquerdo = NULL;                         // Inicializa o filho esquerdo como NULL
+        novo->direito = NULL;                          // Inicializa o filho direito como NULL
+        novo->altura = 0;                              // Altura inicial do nó é 0
+    } else {
+        printf("Erro ao alocar memória para novo nó\n");
+    }
+    return novo;
+}
+
+// Função para retornar o maior entre dois valores
+short maior(short a, short b) {
+    return (a > b) ? a : b; // Retorna o maior valor
+}
+
+// Função para obter a altura de um nó
+short alturaDoNo(No* no) {
+    return (no == NULL) ? -1 : no->altura; // Retorna -1 se o nó for NULL, caso contrário, a altura do nó
+}
+
+// Função para calcular o fator de balanceamento de um nó
+short fatorDeBalanceamento(No* no) {
+    return (no == NULL) ? 0 : alturaDoNo(no->esquerdo) - alturaDoNo(no->direito);
+}
+
+// Função para realizar rotação à esquerda
+No* rotacaoEsquerda(No* r) {
+    No* y = r->direito;
+    No* f = y->esquerdo;
+
+    y->esquerdo = r;
+    r->direito = f;
+
+    r->altura = maior(alturaDoNo(r->esquerdo), alturaDoNo(r->direito)) + 1;
+    y->altura = maior(alturaDoNo(y->esquerdo), alturaDoNo(y->direito)) + 1;
+
+    return y;
+}
+
+// Função para realizar rotação à direita
+No* rotacaoDireita(No* r) {
+    No* y = r->esquerdo;
+    No* f = y->direito;
+
+    y->direito = r;
+    r->esquerdo = f;
+
+    r->altura = maior(alturaDoNo(r->esquerdo), alturaDoNo(r->direito)) + 1;
+    y->altura = maior(alturaDoNo(y->esquerdo), alturaDoNo(y->direito)) + 1;
+
+    return y;
+}
+
+// Função para realizar rotação direita-esquerda
+No* rotacaoDireitaEsquerda(No* r) {
+    r->direito = rotacaoDireita(r->direito); // Primeiro faz uma rotação à direita no filho direito
+    return rotacaoEsquerda(r);              // Depois faz uma rotação à esquerda na raiz
+}
+
+// Função para realizar rotação esquerda-direita
+No* rotacaoEsquerdaDireita(No* r) {
+    r->esquerdo = rotacaoEsquerda(r->esquerdo); // Primeiro faz uma rotação à esquerda no filho esquerdo
+    return rotacaoDireita(r);                  // Depois faz uma rotação à direita na raiz
+}
+
+// Função para buscar um valor na árvore
+int buscar(No* raiz, int valor) {
+    if (raiz == NULL) {
+        return 0; // Retorna 0 se o nó não for encontrado
+    }
+    if (raiz->valor == valor) {
+        return 1; // Retorna 1 se o valor for encontrado
+    }
+    if (valor < raiz->valor) {
+        return buscar(raiz->esquerdo, valor); // Busca na subárvore esquerda
+    } else {
+        return buscar(raiz->direito, valor); // Busca na subárvore direita
+    }
+}
+
+// Função para imprimir a árvore em ordem
+void imprimir(No* raiz) {
+    if (raiz != NULL) {
+        imprimir(raiz->esquerdo);  // Visita o filho esquerdo
+        printf("%d ", raiz->valor); // Imprime o valor do nó
+        imprimir(raiz->direito);   // Visita o filho direito
+    }
+}
